@@ -13,9 +13,4 @@ import UserType from '../type/UserType';
 export default connectionDefinitions({
   name: 'User',
   nodeType: UserType,
-  connectionFields: {
-    count: {
-      type: GraphQLInt,
-    },
-  },
 });

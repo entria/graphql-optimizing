@@ -1,33 +1,35 @@
-input ChangePasswordInput {
-  oldPassword: String!
-
-  # user new password
-  password: String!
-  clientMutationId: String
+# Represents Event
+type Event implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  date: String
+  startTime: String
+  endTime: String
+  venue: Venue
+  createdAt: String
+  updatedAt: String
+  tags: [Tag]
+  viewerRsvp: Boolean
+  attendingFriendsOfViewer(after: String, first: Int, before: String, last: Int): UserConnection
 }
 
-type ChangePasswordPayload {
-  error: String
-  me: User
-  clientMutationId: String
+# A connection to a list of items.
+type EventConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [EventEdge]
 }
 
-input LoginEmailInput {
-  email: String!
-  password: String!
-  clientMutationId: String
-}
+# An edge in a connection.
+type EventEdge {
+  # The item at the end of the edge
+  node: Event
 
-type LoginEmailPayload {
-  token: String
-  error: String
-  clientMutationId: String
-}
-
-type Mutation {
-  LoginEmail(input: LoginEmailInput!): LoginEmailPayload
-  RegisterEmail(input: RegisterEmailInput!): RegisterEmailPayload
-  ChangePassword(input: ChangePasswordInput!): ChangePasswordPayload
+  # A cursor for use in pagination
+  cursor: String!
 }
 
 # An object with an ID
@@ -58,20 +60,16 @@ type Query {
     # The ID of an object
     id: ID!
   ): Node
-  viewer: Viewer
+  user(id: ID!): User
 }
 
-input RegisterEmailInput {
-  name: String!
-  email: String!
-  password: String!
-  clientMutationId: String
-}
-
-type RegisterEmailPayload {
-  token: String
-  error: String
-  clientMutationId: String
+# Represents Tag
+type Tag implements Node {
+  # The ID of an object
+  id: ID!
+  name: String
+  createdAt: String
+  updatedAt: String
 }
 
 # User data
@@ -82,6 +80,7 @@ type User implements Node {
   name: String
   email: String
   active: Boolean
+  upcomingEvent(after: String, first: Int, before: String, last: Int): EventConnection
 }
 
 # A connection to a list of items.
@@ -91,7 +90,6 @@ type UserConnection {
 
   # A list of edges.
   edges: [UserEdge]
-  count: Int
 }
 
 # An edge in a connection.
@@ -103,11 +101,11 @@ type UserEdge {
   cursor: String!
 }
 
-# ...
-type Viewer implements Node {
+# Represents Venue
+type Venue implements Node {
   # The ID of an object
   id: ID!
-  me: User
-  user(id: ID!): User
-  users(after: String, first: Int, before: String, last: Int, search: String): UserConnection
+  name: String
+  createdAt: String
+  updatedAt: String
 }

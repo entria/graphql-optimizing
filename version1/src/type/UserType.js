@@ -7,12 +7,16 @@ import {
 } from 'graphql';
 import {
   globalIdField,
+  connectionArgs,
+  connectionDefinitions,
 } from 'graphql-relay';
 import {
   NodeInterface,
 } from '../interface/NodeInterface';
 
-export default new GraphQLObjectType({
+import EventConnection from '../connection/EventConnection';
+
+const UserType = new GraphQLObjectType({
   name: 'User',
   description: 'User data',
   fields: () => ({
@@ -33,6 +37,22 @@ export default new GraphQLObjectType({
       type: GraphQLBoolean,
       resolve: user => user.active,
     },
+    upcomingEvent: {
+      type: EventConnection.connectionType,
+      args: {
+        ...connectionArgs,
+      },
+      // TODO implement this
+      // resolve: (user, args, context) => EventLoader.loadUpcomingEventsByUsers(context.user, args, user._id),
+    }
   }),
   interfaces: () => [NodeInterface],
 });
+
+export const UserConnection = connectionDefinitions({
+  name: 'User',
+  nodeType: UserType,
+});
+
+export default UserType;
+

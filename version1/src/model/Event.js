@@ -5,21 +5,22 @@ import mongoose from 'mongoose';
 const { ObjectId } = mongoose.Schema.Types;
 
 const Schema = new mongoose.Schema({
-  title: {
+  name: {
     type: String,
     required: true,
   },
-  description: {
-    type: String,
+  date: {
+    type: Date,
+    required: true,
   },
   startTime: {
     type: Date,
-    required: false,
+    required: true,
     index: true,
   },
-  endEnd: {
+  endTime: {
     type: Date,
-    required: false,
+    required: true,
     index: true,
   },
   tags: [{type: ObjectId, ref: 'Tag'}],
