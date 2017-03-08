@@ -1,0 +1,14 @@
+{
+  "directories": {
+    "source": "src",
+    "connection": "connection",
+    "loader": "loader",
+    "model": "model",
+    "mutation": "mutation",
+    "type": "type",
+    "interface": "interface"
+  },
+  "files": {
+    "schema": "schema"
+  }
+}
