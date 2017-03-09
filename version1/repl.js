@@ -6,6 +6,7 @@ import 'babel-polyfill';
 import REPL from 'repl';
 import replPromised from 'repl-promised';
 import history from 'repl.history';
+import dateFns from 'date-fns';
 // import babel from 'babel-core';
 const babel = require('babel-core');
 
@@ -59,6 +60,7 @@ let _eval;
 
     repl.context.M = M;
     repl.context.generateToken = generateToken;
+    repl.context.dateFns = dateFns;
 
     history(repl, `${process.env.HOME}/.node_history`);
 

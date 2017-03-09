@@ -14,6 +14,16 @@ import { UserConnection } from './UserType';
 import TagType from './TagType';
 import VenueType from './VenueType';
 
+import { getConnection } from '../connection/helper';
+
+import {
+  getVenue,
+  getTags,
+  getViewerMetadataForEvent,
+  getViewerFriendIdsAttendingEvent,
+  getUser,
+} from '../resolvers';
+
 export default new GraphQLObjectType({
   name: 'Event',
   description: 'Represents Event',
@@ -42,8 +52,7 @@ export default new GraphQLObjectType({
     venue: {
       type: VenueType,
       description: '',
-      // TODO implement this
-      // resolve: async (obj, args, { user }) => await VenueLoader.load(user, obj.venue),
+      resolve: (event) => getVenue(event.venue),
     },
     createdAt: {
       type: GraphQLString,
@@ -57,25 +66,25 @@ export default new GraphQLObjectType({
     },
     tags: {
       type: new GraphQLList(TagType),
-      // TODO implement this
-    },
-    venue: {
-      type: VenueType,
-      // TODO implement this
+      resolve: (event) => getTags(event.tags),
     },
     viewerRsvp: {
       type: GraphQLBoolean,
-      // TODO implement this
-      // resolve: async (obj, args, { user }) => await VenueLoader.load(user, obj.venue),
+      resolve: (event, args, { user }) => {
+        return getViewerMetadataForEvent(user._id, event._id);
+      },
     },
     attendingFriendsOfViewer: {
       type: UserConnection.connectionType,
       args: {
         ...connectionArgs,
       },
-      // TODO implement this
-      // resolve: (obj, args, { user }) => UserLoader.loadUsers(user, args),
-    }
+      resolve: async (event, args, { user }) => {
+        const friendIds = await getViewerFriendIdsAttendingEvent(user._id, event._id, args.first);
+
+        return getConnection(friendIds, getUser);
+      },
+    },
   }),
   interfaces: () => [NodeInterface],
 });

@@ -29,6 +29,7 @@ const Schema = new mongoose.Schema({
     ref: 'Venue',
     required: true,
   },
+  guests: [{ type: ObjectId, ref: 'User'}],
 }, {
   timestamps: {
     createdAt: 'createdAt',

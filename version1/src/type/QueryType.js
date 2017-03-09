@@ -8,6 +8,8 @@ import { NodeField } from '../interface/NodeInterface';
 
 import UserType from './UserType';
 
+import { getUser } from '../resolvers';
+
 export default new GraphQLObjectType({
   name: 'Query',
   description: 'The root of all... queries',
@@ -27,11 +29,14 @@ export default new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLID),
         },
       },
-      // TODO implement this
-      // resolve: (obj, args, { user }) => {
-      //   const { id } = fromGlobalId(args.id);
-      //   return UserLoader.load(user, id);
-      // },
+      resolve: async (obj, args, context, info) => {
+        const user = await getUser(args.id);
+
+        // add user to context
+        context.user = user;
+
+        return user;
+      },
     },
   }),
 });

@@ -16,6 +16,9 @@ import {
 
 import EventConnection from '../connection/EventConnection';
 
+import { getConnection } from '../connection/helper';
+import { getUpcomingEventIdsForUser, getEvent } from '../resolvers';
+
 const UserType = new GraphQLObjectType({
   name: 'User',
   description: 'User data',
@@ -42,8 +45,11 @@ const UserType = new GraphQLObjectType({
       args: {
         ...connectionArgs,
       },
-      // TODO implement this
-      // resolve: (user, args, context) => EventLoader.loadUpcomingEventsByUsers(context.user, args, user._id),
+      resolve: async (user, args, context, info) => {
+        const eventIds = await getUpcomingEventIdsForUser(user._id, args.first);
+
+        return getConnection(eventIds, getEvent);
+      },
     }
   }),
   interfaces: () => [NodeInterface],
