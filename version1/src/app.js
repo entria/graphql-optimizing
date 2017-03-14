@@ -13,16 +13,25 @@ import { schema } from './schema';
 import { jwtSecret } from './config';
 import { getUser } from './auth';
 
+import {
+  instrumentMiddleware,
+  instrumentSchema,
+  newContext,
+} from './instrument';
+
 const app = new Koa();
 
 app.keys = jwtSecret;
 
 const router = new Router();
 
+instrumentSchema(schema);
+
 app.use(logger());
 app.use(convert(cors()));
-
-router.all('/graphql', convert(graphqlHTTP(async (req, ctx) => {
+app.use(instrumentMiddleware());
+router.all('/graphql', convert(graphqlHTTP(async (req) => {
+  console.log('/graphql: ', req._instrumentContext);
   const { user } = await getUser(req.header.authorization);
 
   return {
@@ -30,6 +39,7 @@ router.all('/graphql', convert(graphqlHTTP(async (req, ctx) => {
     schema,
     context: {
       user,
+      instrumentContext: newContext(req),
     },
     formatError: (error) => {
       console.log(error.message);

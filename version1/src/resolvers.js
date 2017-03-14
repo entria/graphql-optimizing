@@ -11,25 +11,11 @@ import {
   Friendship,
 } from './model';
 
-const logger = (f) => {
-
-  const newFn = (args) => {
-    const start = new Date();
-    const val = f(args);
-    const end = new Date();
-    console.log(`${start.toISOString()},${end.toISOString()},${f.name}`);
-    return val;
-  };
-
-  return newFn;
-};
-
-const _getUser = async (id) => {
+export const getUser = async (id) => {
   return User.findOne({ _id: id });
 };
-export const getUser = logger(_getUser);
 
-const _getUpcomingEventIdsForUser = async (userId, first) => {
+export const getUpcomingEventIdsForUser = async (userId, first) => {
   const events = await Event
     .find({
       guests: userId,
@@ -42,14 +28,12 @@ const _getUpcomingEventIdsForUser = async (userId, first) => {
 
   return events.map((event) => event._id);
 };
-export const getUpcomingEventIdsForUser = logger(_getUpcomingEventIdsForUser);
 
-const _getEvent = async (id) => {
+export const getEvent = async (id) => {
   return Event.findOne({ _id: id });
 };
-export const getEvent = logger(_getEvent);
 
-const _getViewerMetadataForEvent = async (userId, eventId) => {
+export const getViewerMetadataForEvent = async (userId, eventId) => {
   const rsvp = await Rsvp.count({
     user: userId,
     event: eventId,
@@ -57,19 +41,16 @@ const _getViewerMetadataForEvent = async (userId, eventId) => {
 
   return rsvp > 0;
 };
-export const getViewerMetadataForEvent = logger(_getViewerMetadataForEvent);
 
-const _getTags = async (ids) => {
+export const getTags = async (ids) => {
   return Tag.find({_id: { $in: ids }});
 };
-export const getTags = logger(_getTags);
 
-const _getVenue = async (id) => {
+export const getVenue = async (id) => {
   return Venue.findOne({ _id: id });
 };
-export const getVenue = logger(_getVenue);
 
-const _getViewerFriendIdsAttendingEvent = async (userId, eventId, first) => {
+export const getViewerFriendIdsAttendingEvent = async (userId, eventId, first) => {
   const rvsps = await Rsvp
     .find({
       event: eventId,
@@ -102,4 +83,3 @@ const _getViewerFriendIdsAttendingEvent = async (userId, eventId, first) => {
 
   return friends.map((friend) => friend.friend1.toString() === userId.toString() ? friend.friend2 : friend.friend1);
 };
-export const getViewerFriendIdsAttendingEvent = logger(_getViewerFriendIdsAttendingEvent);
